@@ -1,0 +1,13 @@
+{
+  "flags": {
+    "migration-mode": {
+      "state": "ENABLED",
+      "variants": {
+        "old": "OLD",
+        "dual": "DUAL_WRITE",
+        "new": "NEW"
+      },
+      "defaultVariant": "old"
+    }
+  }
+}

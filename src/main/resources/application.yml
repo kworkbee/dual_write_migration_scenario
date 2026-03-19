@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: zero-downtime-migration-simulator
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: start-and-stop
+      start:
+        command: up
+      stop:
+        command: down
+  jpa:
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+app:
+  datasource:
+    old-primary:
+      jdbc-url: jdbc:mysql://localhost:3306/community_old_primary?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      username: app
+      password: app
+      maximum-pool-size: 24
+      minimum-idle: 8
+      connection-timeout-ms: 3000
+    old-secondary:
+      jdbc-url: jdbc:mysql://localhost:3307/community_old_primary?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      username: app
+      password: app
+      maximum-pool-size: 24
+      minimum-idle: 8
+      connection-timeout-ms: 3000
+    new:
+      jdbc-url: jdbc:mysql://localhost:3308/community_new?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      username: app
+      password: app
+      maximum-pool-size: 32
+      minimum-idle: 10
+      connection-timeout-ms: 3000
+  migration:
+    flag-key: migration-mode
+    async:
+      core-pool-size: 24
+      max-pool-size: 64
+      queue-capacity: 2000
+    flagd:
+      host: localhost
+      port: 8013
